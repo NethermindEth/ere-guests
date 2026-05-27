@@ -39,6 +39,7 @@ Located in `crates/`, these provide reusable functionality for guest programs an
 Located in `bin/`, these are executable guest programs for various zkVMs:
 
 - [`stateless-validator-ethrex`](bin/stateless-validator-ethrex) - Stateless validator using Ethrex
+- [`stateless-validator-nethermind`](bin/stateless-validator-nethermind) - Stateless validator using Nethermind (ZisK only — built from C#/.NET sources by [`bin/stateless-validator-nethermind/zisk/build.rs`](bin/stateless-validator-nethermind/zisk/build.rs))
 - [`stateless-validator-reth`](bin/stateless-validator-reth) - Stateless validator using Reth
 
 ## Development
