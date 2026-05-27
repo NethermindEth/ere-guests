@@ -102,12 +102,12 @@ ethrex-rpc = { git = "https://github.com/lambdaclass/ethrex.git", rev = "ef81882
 ethrex-vm = { git = "https://github.com/lambdaclass/ethrex.git", rev = "ef81882cfab3eedcf52c788ced3333530ab01fdb", default-features = false }
 
 # ssz
-libssz = { version = "0.2.1", default-features = false, features = ["alloc"] }
-libssz_derive = { package = "libssz-derive", version = "0.2.1" }
-libssz_merkle = { package = "libssz-merkle", version = "0.2.1", default-features = false, features = [
+libssz = { version = "0.2.2", default-features = false, features = ["alloc"] }
+libssz_derive = { package = "libssz-derive", version = "0.2.2" }
+libssz_merkle = { package = "libssz-merkle", version = "0.2.2", default-features = false, features = [
     "alloc",
 ] }
-libssz_types = { package = "libssz-types", version = "0.2.1", default-features = false, features = [
+libssz_types = { package = "libssz-types", version = "0.2.2", default-features = false, features = [
     "alloc",
 ] }
 
