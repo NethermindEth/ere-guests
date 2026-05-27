@@ -48,7 +48,7 @@ anyhow = { version = "1.0", default-features = false }
 bincode = { version = "2.0.1", default-features = false }
 clap = { version = "4.6.0", features = ["derive"] }
 once_cell = { version = "1.21", default-features = false }
-rkyv = { version = "0.8.10", default-features = false }
+rkyv = { version = "0.8.16", default-features = false }
 serde = { version = "1.0", default-features = false }
 serde_with = { version = "3", default-features = false }
 sha2 = { version = "0.10.9", default-features = false }
