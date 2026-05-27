@@ -1,0 +1,21 @@
+[workspace]
+
+[package]
+name = "stateless-validator-nethermind-zisk"
+version = "0.1.0"
+edition = "2024"
+publish = false
+description = "Wrapper around the Nethermind .NET-based ZisK stateless-validator guest build"
+build = "build.rs"
+
+# This is not a real Rust guest. The Nethermind stateless-validator guest is
+# a C#/.NET project under src/Nethermind/Nethermind.Stateless.ZiskGuest in the
+# Nethermind repo. `cargo build -p stateless-validator-nethermind-zisk` only
+# drives `build.rs`, which delegates to `scripts/build-nethermind-guest.sh` —
+# that script clones Nethermind, runs `make build` inside Docker (dotnet AOT
+# → ZisK ELF), and drops the resulting ELF in OUT_DIR.
+
+[lib]
+path = "src/lib.rs"
+
+[dependencies]
