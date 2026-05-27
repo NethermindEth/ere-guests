@@ -113,9 +113,81 @@ jobs:
             output/stateless-validator-${{ matrix.el }}-${{ matrix.zkvm }}.vk
           if-no-files-found: error
 
+  compile-nethermind:
+    name: Compile stateless-validator-nethermind-zisk
+    # Nethermind's guest is a C#/.NET project, not Rust — it can't use the
+    # ere-compiler-zisk Docker pipeline above. Build via the dedicated script.
+    runs-on: ubuntu-latest
+    outputs:
+      ere_tag: ${{ steps.get_ere_tag.outputs.ere_tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Free up disk space
+        run: bash .github/scripts/free-up-disk-space.sh
+
+      - name: Get Ere tag
+        id: get_ere_tag
+        run: |
+          ERE_TAG=$(cargo tree -p ere-platform-core | head -n 1 | sed -E -e 's/.*\?rev=(.{7}).*/\1/' -e 's/.*\?tag=v([0-9.]+).*/\1/')
+          echo "ere_tag=${ERE_TAG}" >> $GITHUB_OUTPUT
+          echo "Ere tag: ${ERE_TAG}"
+
+      - name: Pull Ere images
+        run: |
+          docker pull ghcr.io/eth-act/ere/ere-server-zisk:${{ steps.get_ere_tag.outputs.ere_tag }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build Nethermind guest ELF
+        env:
+          NETHERMIND_REF: feature/benchmark
+        run: |
+          cargo build \
+            --manifest-path bin/stateless-validator-nethermind/zisk/Cargo.toml \
+            --release
+          mkdir -p output
+          # build.rs places the ELF in OUT_DIR; find it and stage for upload.
+          ELF_PATH=$(find bin/stateless-validator-nethermind/zisk/target/release/build \
+            -name stateless-validator-nethermind-zisk.elf -print -quit)
+          if [[ -z "${ELF_PATH}" ]]; then
+            echo "Nethermind guest ELF not found after cargo build" >&2
+            exit 1
+          fi
+          cp "${ELF_PATH}" output/stateless-validator-nethermind-zisk.elf
+          cp "$(dirname "${ELF_PATH}")/stateless-validator-nethermind-zisk.version" \
+            output/stateless-validator-nethermind-zisk.version
+
+      - name: Generate program VK
+        run: |
+          docker run \
+            -e RUST_LOG=info \
+            -v $PWD/output:/output \
+            ghcr.io/eth-act/ere/ere-server-zisk:${{ steps.get_ere_tag.outputs.ere_tag }} \
+            --elf-path /output/stateless-validator-nethermind-zisk.elf \
+            keygen \
+            --program-vk-path /output/stateless-validator-nethermind-zisk.vk
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stateless-validator-nethermind-zisk
+          path: |
+            output/stateless-validator-nethermind-zisk*.elf
+            output/stateless-validator-nethermind-zisk.vk
+            output/stateless-validator-nethermind-zisk.version
+          if-no-files-found: error
+
   check-git-tag:
     name: Check whether git tag exists
-    needs: compile
+    needs: [compile, compile-nethermind]
     runs-on: ubuntu-latest
     outputs:
       exists: ${{ steps.check-git-tag.outputs.exists }}
