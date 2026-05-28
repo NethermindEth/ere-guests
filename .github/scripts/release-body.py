@@ -102,6 +102,19 @@ def read_elf_word_size(elf_path: Path) -> int:
         return 32
     if "64-bit" in proc.stdout:
         return 64
+    # Some zkVMs (e.g. risc0) wrap the inner ELF in a custom container
+    # (`R0BF...`), so `file` only sees the wrapper magic and reports `data`.
+    # Fall back to scanning the prefix for the inner ELF magic and reading
+    # `e_ident[EI_CLASS]` (1 → 32-bit, 2 → 64-bit) directly.
+    with elf_path.open("rb") as elf_file:
+        head = elf_file.read(256)
+    idx = head.find(b"\x7fELF")
+    if idx != -1 and idx + 4 < len(head):
+        ei_class = head[idx + 4]
+        if ei_class == 1:
+            return 32
+        if ei_class == 2:
+            return 64
     raise RuntimeError(f"cannot determine ELF class from `file`: {proc.stdout.strip()}")
 
 
