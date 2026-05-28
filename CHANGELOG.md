@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.2](https://github.com/NethermindEth/ere-guests/compare/v0.12.1...v0.12.2) (2026-05-28)
+
+
+### Bug Fixes
+
+* trigger build ([f702c13](https://github.com/NethermindEth/ere-guests/commit/f702c136628dda99f2b9b13eff636f9ea84ff21e))
+
 ## [0.12.1](https://github.com/NethermindEth/ere-guests/compare/v0.12.0...v0.12.1) (2026-05-28)
 
 
