@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/NethermindEth/ere-guests/compare/v0.12.0...v0.12.1) (2026-05-28)
+
+
+### Bug Fixes
+
+* handle R0BF-wrapped risc0 ELFs in release notes ([01345bd](https://github.com/NethermindEth/ere-guests/commit/01345bd83ab4aa8a216ef819f639a1ad3a17ce14))
+
 ## [0.12.0](https://github.com/NethermindEth/ere-guests/compare/v0.11.0...v0.12.0) (2026-05-27)
 
 
