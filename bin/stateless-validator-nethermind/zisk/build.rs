@@ -3,7 +3,7 @@
 //! Nethermind's stateless-validator guest is a C#/.NET project — there is no
 //! Rust source to compile here. This `build.rs`:
 //!
-//! 1. Clones (or refreshes) `NethermindEth/nethermind` at branch `feature/benchmark` (override via
+//! 1. Clones (or refreshes) `NethermindEth/nethermind` at branch `feature/benchmark_fixes3` (override via
 //!    `NETHERMIND_REF`, `NETHERMIND_REPO_URL`, or `NETHERMIND_SRC`).
 //! 2. Runs `make build` in `src/Nethermind/Nethermind.Stateless.ZiskGuest` (uses Docker + dotnet
 //!    AOT → ZisK ELF under the hood).
@@ -22,7 +22,7 @@ use std::{
 
 const ELF_NAME: &str = "stateless-validator-nethermind-zisk.elf";
 const DEFAULT_REPO_URL: &str = "https://github.com/NethermindEth/nethermind.git";
-const DEFAULT_REF: &str = "feature/benchmark";
+const DEFAULT_REF: &str = "feature/benchmark_fixes3";
 const GUEST_SUBDIR: &str = "src/Nethermind/Nethermind.Stateless.ZiskGuest";
 const INPUT_GEN_SUBDIR: &str = "tools/StatelessInputGen";
 const INPUT_GEN_LAUNCHER: &str = "stateless-input-gen";
