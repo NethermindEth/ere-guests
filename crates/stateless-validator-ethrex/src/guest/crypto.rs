@@ -1,5 +1,7 @@
 //! Crypto provider selection for the guest.
 
+#[cfg(feature = "openvm")]
+mod openvm;
 #[cfg(feature = "zkvm-interface")]
 mod zkvm_interface;
 
@@ -11,13 +13,11 @@ use stateless_validator_common::Sha256Hasher;
 /// Returns the [`Crypto`] implementation for the active zkVM feature.
 #[allow(unreachable_code)]
 pub(crate) fn crypto() -> Arc<dyn Crypto> {
+    #[cfg(feature = "openvm")]
+    return openvm::crypto();
     #[cfg(feature = "zkvm-interface")]
     return zkvm_interface::crypto();
-    #[cfg(feature = "risc0")]
-    return Arc::new(ethrex_guest_program::crypto::risc0::Risc0Crypto);
-    #[cfg(feature = "sp1")]
-    return Arc::new(ethrex_guest_program::crypto::sp1::Sp1Crypto);
-    #[cfg(not(any(feature = "zkvm-interface", feature = "risc0", feature = "sp1")))]
+    #[cfg(not(any(feature = "openvm", feature = "zkvm-interface")))]
     return Arc::new(ethrex_guest_program::crypto::NativeCrypto);
 }
 
@@ -32,9 +32,4 @@ pub(crate) fn sha256_hasher() -> impl Sha256Hasher {
     }
 
     CryptoSha256Hasher(crypto())
-}
-
-/// Returns the SHA256 digest of the data using the active [`crypto`] provider.
-pub(crate) fn sha256(data: &[u8]) -> [u8; 32] {
-    crypto().sha256(data)
 }

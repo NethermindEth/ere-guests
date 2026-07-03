@@ -269,6 +269,17 @@ impl NewPayloadRequest {
             Self::Gloas(request) => request.execution_payload.block_hash,
         }
     }
+
+    /// Returns the transactions of the execution payload.
+    pub fn transactions(&self) -> &Transactions {
+        match self {
+            Self::Bellatrix(request) => &request.execution_payload.transactions,
+            Self::Capella(request) => &request.execution_payload.transactions,
+            Self::Deneb(request) => &request.execution_payload.transactions,
+            Self::ElectraFulu(request) => &request.execution_payload.transactions,
+            Self::Gloas(request) => &request.execution_payload.transactions,
+        }
+    }
 }
 
 impl HashTreeRoot for NewPayloadRequest {
@@ -323,10 +334,7 @@ impl SszDecode for NewPayloadRequest {
     }
 
     /// Decodes by attempting each container shape from the newest fork to the
-    /// oldest and returning the first success. [`matches_payload`] checks the
-    /// decoded shape against a known fork.
-    ///
-    /// [`matches_payload`]: crate::guest::input::ProtocolFork::matches_payload
+    /// oldest and returning the first success.
     fn from_ssz_bytes(bytes: &[u8]) -> Result<Self, DecodeError> {
         NewPayloadRequestGloas::from_ssz_bytes(bytes)
             .map(Self::Gloas)
@@ -343,8 +351,10 @@ mod tests {
 
     use libssz_merkle::Sha2Hasher;
 
-    use super::*;
-    use crate::guest::input::ProtocolFork;
+    use crate::guest::input::{
+        ChainConfig, ExecutionWitness, ForkActivation, ForkConfig, ProtocolFork, StatelessInput,
+        new_payload_request::*,
+    };
 
     fn payload_v1() -> ExecutionPayloadV1 {
         ExecutionPayloadV1 {
@@ -500,6 +510,21 @@ mod tests {
         })
     }
 
+    fn stateless_input(
+        new_payload_request: NewPayloadRequest,
+        fork: ProtocolFork,
+    ) -> StatelessInput {
+        StatelessInput {
+            new_payload_request,
+            witness: ExecutionWitness::default(),
+            chain_config: ChainConfig {
+                chain_id: 0,
+                active_fork: ForkConfig::new(fork, ForkActivation::default(), None),
+            },
+            public_keys: Default::default(),
+        }
+    }
+
     #[test]
     fn from_ssz_bytes_decodes_every_variant() {
         for request in [bellatrix(), capella(), deneb(), electra_fulu(), gloas()] {
@@ -527,9 +552,15 @@ mod tests {
             (electra_fulu(), ELECTRA_FULU_FORKS),
             (gloas(), [ProtocolFork::Amsterdam].as_slice()),
         ] {
-            for value in 0..=ProtocolFork::Amsterdam.as_u64() {
-                let fork = ProtocolFork::from_u64(value).unwrap();
-                assert_eq!(fork.matches_payload(&request), matching.contains(&fork));
+            for fork in 0..=ProtocolFork::Amsterdam.as_u64() {
+                let fork = ProtocolFork::from_u64(fork).unwrap();
+                let input = stateless_input(request.clone(), fork);
+                let result = StatelessInput::from_ssz_bytes(&input.to_ssz());
+                if matching.contains(&fork) {
+                    assert_eq!(result.unwrap().new_payload_request, request);
+                } else {
+                    assert!(result.is_err());
+                }
             }
         }
     }

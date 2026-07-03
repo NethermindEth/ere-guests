@@ -5,7 +5,7 @@ use std::io::{self, Write};
 use ere_platform_core::Platform;
 
 use crate::{
-    execution::{ExecutionFailures, ExecutionOutput, run_execution},
+    execution::{ExecutionFailures, run_execution},
     fixture::{FixturePreset, preset_fixtures},
 };
 
@@ -31,18 +31,25 @@ impl Platform for HostPlatform {
 }
 
 /// Test execution on host.
-pub fn test_host_execution(preset: FixturePreset, execute: fn(&[u8]) -> Vec<u8>) {
-    let failures = run_execution(preset_fixtures(preset), &|input| {
-        let output = execute(&input);
-        Ok(ExecutionOutput::Bytes(output))
-    });
-    assert!(failures.is_empty(), "{}", ExecutionFailures(&failures));
+pub fn test_host_execution(
+    preset: FixturePreset,
+    execute: fn(&[u8]) -> Vec<u8>,
+    expected_failures: usize,
+) {
+    let failures = run_execution(preset_fixtures(preset), &|input| Ok(execute(&input)));
+    assert_eq!(
+        failures.len(),
+        expected_failures,
+        "expected {expected_failures} failures, got {}:\n{}",
+        failures.len(),
+        ExecutionFailures(&failures),
+    );
 }
 
 /// Declares a host execution test for a fixture preset and guest entrypoint.
 #[macro_export]
 macro_rules! declare_test_host_execution {
-    ($preset:ident, $execute:ident) => {
+    ($preset:ident, $execute:ident, failures = $expected_failures:expr) => {
         paste::paste! {
             #[test]
             fn [<test_host_execution_ $preset:snake>]() {
@@ -50,21 +57,15 @@ macro_rules! declare_test_host_execution {
                     execution::host::{HostPlatform, test_host_execution},
                     fixture::FixturePreset,
                 };
-                test_host_execution(FixturePreset::$preset, $execute::<HostPlatform>);
+                test_host_execution(
+                    FixturePreset::$preset,
+                    $execute::<HostPlatform>,
+                    $expected_failures,
+                );
             }
         }
     };
-    ($preset:ident, $execute:ident, should_panic) => {
-        paste::paste! {
-            #[test]
-            #[should_panic]
-            fn [<test_host_execution_ $preset:snake>]() {
-                use $crate::{
-                    execution::host::{HostPlatform, test_host_execution},
-                    fixture::FixturePreset,
-                };
-                test_host_execution(FixturePreset::$preset, $execute::<HostPlatform>);
-            }
-        }
+    ($preset:ident, $execute:ident) => {
+        $crate::declare_test_host_execution!($preset, $execute, failures = 0);
     };
 }

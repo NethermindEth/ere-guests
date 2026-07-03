@@ -15,7 +15,7 @@ env:
 
 jobs:
   test_zkvm_execution:
-    name: Test zkVM execution of ${{ matrix.guest }} on ${{ matrix.zkvm }}
+    name: ${{ matrix.guest }} on ${{ matrix.zkvm }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -23,26 +23,14 @@ jobs:
         guest:
           - ethrex
           - reth
-          - zesu
         zkvm:
-          - airbender
           - openvm
-          - risc0
           - sp1
           - zisk
-        exclude:
-          - { guest: ethrex, zkvm: airbender }
-          - { guest: ethrex, zkvm: openvm }
-          - { guest: zesu, zkvm: airbender }
-          - { guest: zesu, zkvm: openvm }
-          - { guest: zesu, zkvm: risc0 }
-          - { guest: zesu, zkvm: sp1 }
         include:
-          - { zkvm: openvm, threads: 1 }
-          - { zkvm: sp1, threads: 1 }
-          - { zkvm: zisk, eest: true }
-          - { guest: zesu, external: true }
-          - { guest: ethrex, zkvm: zisk, ere_profile: ethrex }
+          - { zkvm: zisk, external: true, guest: nethermind }
+          - { zkvm: zisk, external: true, guest: zesu }
+          - { zkvm: zisk, guest: ethrex, ere_profile: ethrex }
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -103,7 +91,6 @@ jobs:
           cargo test --release --package stateless-validator-test --test zkvm_execution -- ${{ matrix.guest }}_${{ matrix.zkvm }}_rpc --test-threads=1
 
       - name: Test zkVM execution (EEST fixtures)
-        if: matrix.eest == true
         env:
           RUST_LOG: info,ere_server=error
           ERE_IMAGE_REGISTRY: ghcr.io/eth-act/ere
@@ -121,7 +108,7 @@ jobs:
         run: ${SCCACHE_PATH} --show-stats
 
   test_host_execution:
-    name: Test host execution of ${{ matrix.guest }}
+    name: ${{ matrix.guest }} on host
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false

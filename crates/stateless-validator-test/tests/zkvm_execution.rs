@@ -6,60 +6,80 @@ use stateless_validator_test::{
     fixture::FixturePreset,
 };
 
-fn test_execution(guest_kind: GuestKind, zkvm_kind: zkVMKind, preset: FixturePreset) {
+fn test_execution(
+    guest_kind: GuestKind,
+    zkvm_kind: zkVMKind,
+    preset: FixturePreset,
+    expected_failures: usize,
+) {
     let failures = run_stateless_validator_execution(guest_kind, zkvm_kind, preset);
-    assert!(failures.is_empty(), "{}", ExecutionFailures(&failures));
+    assert_eq!(
+        failures.len(),
+        expected_failures,
+        "expected {expected_failures} failures, got {}:\n{}",
+        failures.len(),
+        ExecutionFailures(&failures),
+    );
 }
 
 macro_rules! declare_test {
-    ($guest_kind:ident, $zkvm_kind:ident, $preset:ident) => {
+    ($guest_kind:ident, $zkvm_kind:ident, $preset:ident, failures = $expected_failures:expr) => {
         paste::paste! {
             #[test]
             fn [<test_execution_ $guest_kind:lower _ $zkvm_kind:lower _ $preset:snake>]() {
-                test_execution(GuestKind::$guest_kind, zkVMKind::$zkvm_kind, FixturePreset::$preset);
+                test_execution(
+                    GuestKind::$guest_kind,
+                    zkVMKind::$zkvm_kind,
+                    FixturePreset::$preset,
+                    $expected_failures,
+                );
             }
         }
     };
-    ($guest_kind:ident, $zkvm_kind:ident, $preset:ident, should_panic) => {
-        paste::paste! {
-            #[test]
-            #[should_panic]
-            fn [<test_execution_ $guest_kind:lower _ $zkvm_kind:lower _ $preset:snake>]() {
-                test_execution(GuestKind::$guest_kind, zkVMKind::$zkvm_kind, FixturePreset::$preset);
-            }
-        }
+    ($guest_kind:ident, $zkvm_kind:ident, $preset:ident) => {
+        declare_test!($guest_kind, $zkvm_kind, $preset, failures = 0);
     };
 }
 
 // Ethrex
 
-declare_test!(Ethrex, Risc0, RpcBpo2);
-declare_test!(Ethrex, Risc0, RpcGlamsterdamDevnet5);
-declare_test!(Ethrex, Risc0, EestBalDevnet7);
+declare_test!(Ethrex, OpenVM, RpcBpo2);
+declare_test!(Ethrex, OpenVM, RpcGlamsterdamDevnet5);
+// Ethrex arithmetic overflow on 32-bit targets and calldata allocation OOM.
+declare_test!(Ethrex, OpenVM, EestBalDevnet7, failures = 4);
 declare_test!(Ethrex, SP1, RpcBpo2);
 declare_test!(Ethrex, SP1, RpcGlamsterdamDevnet5);
 declare_test!(Ethrex, SP1, EestBalDevnet7);
 declare_test!(Ethrex, Zisk, RpcBpo2);
 declare_test!(Ethrex, Zisk, RpcGlamsterdamDevnet5);
-// NOTE: `should_panic` should be unnecessary when upgraded to `zisk@v1.0.0-beta`
-declare_test!(Ethrex, Zisk, EestBalDevnet7, should_panic);
+// Ethrex calldata allocation OOM + ZisK `zkvm-interface` impl bug.
+declare_test!(Ethrex, Zisk, EestBalDevnet7, failures = 25);
 
-// Reth (EEST is skipped)
+// Reth
 
-declare_test!(Reth, Airbender, RpcBpo2);
-declare_test!(Reth, Airbender, RpcGlamsterdamDevnet5);
 declare_test!(Reth, OpenVM, RpcBpo2);
 declare_test!(Reth, OpenVM, RpcGlamsterdamDevnet5);
-declare_test!(Reth, Risc0, RpcBpo2);
-declare_test!(Reth, Risc0, RpcGlamsterdamDevnet5);
+// Reth divergences.
+declare_test!(Reth, OpenVM, EestBalDevnet7, failures = 16);
 declare_test!(Reth, SP1, RpcBpo2);
 declare_test!(Reth, SP1, RpcGlamsterdamDevnet5);
+// Reth divergences.
+declare_test!(Reth, SP1, EestBalDevnet7, failures = 16);
 declare_test!(Reth, Zisk, RpcBpo2);
 declare_test!(Reth, Zisk, RpcGlamsterdamDevnet5);
+// Reth divergences + ZisK `zkvm-interface` impl bug.
+declare_test!(Reth, Zisk, EestBalDevnet7, failures = 38);
 
-// Zesu (only bal-devnet-7)
+// Zesu
 
-// NOTE: `should_panic` should be unnecessary when upgraded to `zisk@v1.0.0-beta`
-declare_test!(Zesu, Zisk, EestBalDevnet7, should_panic);
-// FIXME: Check why Zesu doesn't pass RpcGlamsterdamDevnet5.
-// declare_test!(Zesu, Zisk, RpcGlamsterdamDevnet5);
+// ZisK `zkvm-interface` impl bug.
+declare_test!(Zesu, Zisk, EestBalDevnet7, failures = 121);
+// Should be fixed by https://github.com/Consensys/zesu/pull/70.
+declare_test!(Zesu, Zisk, RpcGlamsterdamDevnet5, failures = 50);
+
+// Nethermind
+
+declare_test!(Nethermind, Zisk, RpcBpo2);
+declare_test!(Nethermind, Zisk, RpcGlamsterdamDevnet5);
+// Nethermind divergences + ZisK `zkvm-interface` impl bug.
+declare_test!(Nethermind, Zisk, EestBalDevnet7, failures = 614);

@@ -822,8 +822,8 @@ dependencies = [
 
 [[package]]
 name = "circuit"
-version = "0.18.0"
-source = "git+https://github.com/han0110/zisk.git?branch=patch%2Fv0.18.0#d08c6141ccb21e6ef4b80129c94ade5717fd41ce"
+version = "1.0.0-alpha"
+source = "git+https://github.com/0xPolygonHermez/zisk.git?tag=v1.0.0-alpha#4b9f758fabc4955cac20af837019ccc31b803a46"
 
 [[package]]
 name = "clang-sys"
@@ -1174,12 +1174,12 @@ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 [[package]]
 name = "ere-platform-core"
 version = "0.12.2"
-source = "git+https://github.com/eth-act/ere?tag=v0.12.2#c31ee8bf5985bcdbee93217c868eb6d9c811aefb"
+source = "git+https://github.com/eth-act/ere?rev=968d72e1ca55e8744ff3517460f0bbd3ee88bd4b#968d72e1ca55e8744ff3517460f0bbd3ee88bd4b"
 
 [[package]]
 name = "ere-platform-zisk"
 version = "0.12.2"
-source = "git+https://github.com/eth-act/ere?tag=v0.12.2#c31ee8bf5985bcdbee93217c868eb6d9c811aefb"
+source = "git+https://github.com/eth-act/ere?rev=968d72e1ca55e8744ff3517460f0bbd3ee88bd4b#968d72e1ca55e8744ff3517460f0bbd3ee88bd4b"
 dependencies = [
  "ere-platform-core",
  "ziskos",
@@ -1188,7 +1188,7 @@ dependencies = [
 [[package]]
 name = "ere-util-build"
 version = "0.12.2"
-source = "git+https://github.com/eth-act/ere?tag=v0.12.2#c31ee8bf5985bcdbee93217c868eb6d9c811aefb"
+source = "git+https://github.com/eth-act/ere?rev=968d72e1ca55e8744ff3517460f0bbd3ee88bd4b#968d72e1ca55e8744ff3517460f0bbd3ee88bd4b"
 dependencies = [
  "cargo_metadata",
 ]
@@ -1211,8 +1211,8 @@ dependencies = [
 
 [[package]]
 name = "fields"
-version = "0.18.0"
-source = "git+https://github.com/0xPolygonHermez/pil2-proofman.git?tag=v0.18.0#42ad4d02da3d3b6238ac126ead82a8814f3fd426"
+version = "1.0.0-alpha"
+source = "git+https://github.com/0xPolygonHermez/pil2-proofman.git?tag=v1.0.0-alpha#4f2a34ac686c788ad66a1a8ea0a17a016319e65b"
 dependencies = [
  "cfg-if",
  "num-bigint",
@@ -1604,8 +1604,8 @@ checksum = "bbd2bcb4c963f2ddae06a2efc7e9f3591312473c50c6685e1f298068316e66fe"
 
 [[package]]
 name = "lib-c"
-version = "0.18.0"
-source = "git+https://github.com/han0110/zisk.git?branch=patch%2Fv0.18.0#d08c6141ccb21e6ef4b80129c94ade5717fd41ce"
+version = "1.0.0-alpha"
+source = "git+https://github.com/0xPolygonHermez/zisk.git?tag=v1.0.0-alpha#4b9f758fabc4955cac20af837019ccc31b803a46"
 
 [[package]]
 name = "libc"
@@ -2022,15 +2022,14 @@ dependencies = [
 
 [[package]]
 name = "precompiles-helpers"
-version = "0.18.0"
-source = "git+https://github.com/han0110/zisk.git?branch=patch%2Fv0.18.0#d08c6141ccb21e6ef4b80129c94ade5717fd41ce"
+version = "1.0.0-alpha"
+source = "git+https://github.com/0xPolygonHermez/zisk.git?tag=v1.0.0-alpha#4b9f758fabc4955cac20af837019ccc31b803a46"
 dependencies = [
  "ark-bls12-381",
  "ark-bn254",
  "ark-ff",
  "ark-secp256k1",
  "ark-secp256r1",
- "ark-std",
  "cfg-if",
  "circuit",
  "crunchy",
@@ -2091,8 +2090,8 @@ dependencies = [
 
 [[package]]
 name = "proofman-verifier"
-version = "0.18.0"
-source = "git+https://github.com/0xPolygonHermez/pil2-proofman.git?tag=v0.18.0#42ad4d02da3d3b6238ac126ead82a8814f3fd426"
+version = "1.0.0-alpha"
+source = "git+https://github.com/0xPolygonHermez/pil2-proofman.git?tag=v1.0.0-alpha#4f2a34ac686c788ad66a1a8ea0a17a016319e65b"
 dependencies = [
  "fields",
  "num-traits",
@@ -3061,15 +3060,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "spin"
-version = "0.9.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6980e8d7511241f8acf4aebddbb1ff938df5eebe98691418c4468d0b72a96a67"
-dependencies = [
- "lock_api",
-]
-
-[[package]]
 name = "spki"
 version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3088,7 +3078,7 @@ checksum = "6ce2be8dc25455e1f91df71bfa12ad37d7af1092ae736f3a6cd0e37bc7810596"
 [[package]]
 name = "stateless"
 version = "0.1.0"
-source = "git+https://github.com/han0110/stateless?branch=feature%2Fv2.3.0#81f662b467ec6c25c323b3429c5ab4305a3088ac"
+source = "git+https://github.com/paradigmxyz/stateless?rev=2236845a84c3a7515312214e8a507e4731d73bb5#2236845a84c3a7515312214e8a507e4731d73bb5"
 dependencies = [
  "alloy-consensus",
  "alloy-eips",
@@ -3154,7 +3144,6 @@ dependencies = [
 name = "stateless-validator-reth-zisk"
 version = "0.1.0"
 dependencies = [
- "alloy-consensus",
  "alloy-primitives",
  "ere-platform-zisk",
  "stateless-validator-reth",
@@ -3352,7 +3341,7 @@ checksum = "db97caf9d906fbde555dd62fa95ddba9eecfd14cb388e4f491a66d74cd5fb79a"
 [[package]]
 name = "tries"
 version = "0.1.0"
-source = "git+https://github.com/han0110/stateless?branch=feature%2Fv2.3.0#81f662b467ec6c25c323b3429c5ab4305a3088ac"
+source = "git+https://github.com/paradigmxyz/stateless?rev=2236845a84c3a7515312214e8a507e4731d73bb5#2236845a84c3a7515312214e8a507e4731d73bb5"
 dependencies = [
  "alloy-primitives",
  "alloy-rlp",
@@ -3594,7 +3583,7 @@ dependencies = [
 [[package]]
 name = "zeth-mpt"
 version = "0.1.0"
-source = "git+https://github.com/han0110/stateless?branch=feature%2Fv2.3.0#81f662b467ec6c25c323b3429c5ab4305a3088ac"
+source = "git+https://github.com/paradigmxyz/stateless?rev=2236845a84c3a7515312214e8a507e4731d73bb5#2236845a84c3a7515312214e8a507e4731d73bb5"
 dependencies = [
  "alloy-primitives",
  "alloy-rlp",
@@ -3604,21 +3593,21 @@ dependencies = [
 
 [[package]]
 name = "zisk-definitions"
-version = "0.18.0"
-source = "git+https://github.com/han0110/zisk.git?branch=patch%2Fv0.18.0#d08c6141ccb21e6ef4b80129c94ade5717fd41ce"
+version = "1.0.0-alpha"
+source = "git+https://github.com/0xPolygonHermez/zisk.git?tag=v1.0.0-alpha#4b9f758fabc4955cac20af837019ccc31b803a46"
 
 [[package]]
 name = "zisk-verifier"
-version = "0.18.0"
-source = "git+https://github.com/han0110/zisk.git?branch=patch%2Fv0.18.0#d08c6141ccb21e6ef4b80129c94ade5717fd41ce"
+version = "1.0.0-alpha"
+source = "git+https://github.com/0xPolygonHermez/zisk.git?tag=v1.0.0-alpha#4b9f758fabc4955cac20af837019ccc31b803a46"
 dependencies = [
  "proofman-verifier",
 ]
 
 [[package]]
 name = "ziskos"
-version = "0.18.0"
-source = "git+https://github.com/han0110/zisk.git?branch=patch%2Fv0.18.0#d08c6141ccb21e6ef4b80129c94ade5717fd41ce"
+version = "1.0.0-alpha"
+source = "git+https://github.com/0xPolygonHermez/zisk.git?tag=v1.0.0-alpha#4b9f758fabc4955cac20af837019ccc31b803a46"
 dependencies = [
  "ark-bn254",
  "ark-ec",
@@ -3642,11 +3631,10 @@ dependencies = [
  "secp256k1 0.31.1",
  "serde",
  "sha2",
- "spin",
  "tiny-keccak",
  "zisk-definitions",
  "zisk-verifier",
- "zkvm-interface 0.18.0",
+ "zkvm-interface 1.0.0-alpha",
 ]
 
 [[package]]
@@ -3659,8 +3647,8 @@ dependencies = [
 
 [[package]]
 name = "zkvm-interface"
-version = "0.18.0"
-source = "git+https://github.com/han0110/zisk.git?branch=patch%2Fv0.18.0#d08c6141ccb21e6ef4b80129c94ade5717fd41ce"
+version = "1.0.0-alpha"
+source = "git+https://github.com/0xPolygonHermez/zisk.git?tag=v1.0.0-alpha#4b9f758fabc4955cac20af837019ccc31b803a46"
 dependencies = [
  "bindgen",
 ]
