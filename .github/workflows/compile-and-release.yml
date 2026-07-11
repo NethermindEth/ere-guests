@@ -106,6 +106,69 @@ jobs:
             output/stateless-validator-${{ matrix.el }}-${{ matrix.zkvm }}.vk
           if-no-files-found: error
 
+  compile-nethermind:
+    name: Compile stateless-validator-nethermind-zisk
+    # Nethermind's guest is a C#/.NET project, not Rust — it can't use the
+    # ere-compiler image. build.rs clones NethermindEth/nethermind and drives
+    # `make build` (Docker bflat + dotnet AOT -> ZisK ELF).
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Free up disk space
+        run: bash .github/scripts/free-up-disk-space.sh
+
+      - name: Install .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Build Nethermind guest ELF
+        # Uses build.rs's pinned NETHERMIND_REF (a specific commit) for reproducibility.
+        run: |
+          cargo build --release --manifest-path bin/stateless-validator-nethermind/zisk/Cargo.toml
+          ELF_PATH=$(find bin/stateless-validator-nethermind/zisk/target/release/build \
+            -name stateless-validator-nethermind-zisk.elf -print -quit)
+          if [ -z "${ELF_PATH}" ]; then
+            echo "Nethermind guest ELF not found after cargo build" >&2
+            exit 1
+          fi
+          mkdir -p output
+          cp "${ELF_PATH}" output/stateless-validator-nethermind-zisk.elf
+          cp "$(dirname "${ELF_PATH}")/stateless-validator-nethermind-zisk.version" \
+            output/stateless-validator-nethermind-zisk.version
+
+      - name: Get Ere tag
+        id: get_ere_tag
+        run: |
+          ERE_TAG=$(cargo tree -p ere-platform-core | head -n 1 | sed -E -e 's/.*\?rev=(.{7}).*/\1/' -e 's/.*\?tag=v([0-9.]+).*/\1/')
+          echo "ere_tag=${ERE_TAG}" >> $GITHUB_OUTPUT
+          echo "Ere tag: ${ERE_TAG}"
+
+      - name: Pull Ere image
+        run: docker pull ghcr.io/eth-act/ere/ere-server-zisk:${{ steps.get_ere_tag.outputs.ere_tag }}
+
+      - name: Generate program VK
+        run: |
+          docker run \
+            -e RUST_LOG=info \
+            -v $PWD/output:/output \
+            ghcr.io/eth-act/ere/ere-server-zisk:${{ steps.get_ere_tag.outputs.ere_tag }} \
+            --elf-path /output/stateless-validator-nethermind-zisk.elf \
+            keygen \
+            --program-vk-path /output/stateless-validator-nethermind-zisk.vk
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: stateless-validator-nethermind-zisk
+          path: |
+            output/stateless-validator-nethermind-zisk*.elf
+            output/stateless-validator-nethermind-zisk.vk
+            output/stateless-validator-nethermind-zisk.version
+          if-no-files-found: error
+
   republish-setup:
     name: Resolve republish matrix from artifact-registry.json
     runs-on: ubuntu-latest
@@ -188,7 +251,7 @@ jobs:
 
   update-release-with-artifacts:
     name: Update release with artifacts
-    needs: [compile, republish, check-git-tag]
+    needs: [compile, compile-nethermind, republish, check-git-tag]
     if: needs.check-git-tag.outputs.exists == 'true'
     runs-on: ubuntu-latest
     steps:
