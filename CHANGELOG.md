@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.14.0](https://github.com/NethermindEth/ere-guests/compare/v0.13.0...v0.14.0) (2026-07-11)
+
+
+### Features
+
+* add Nethermind ZisK stateless-validator guest (on ere v0.13.0 / zisk v1.0.0-alpha) ([8bbf91d](https://github.com/NethermindEth/ere-guests/commit/8bbf91d0b114012273b641df2b30a6aeee8798e6))
+* canonical stateless input ([#58](https://github.com/NethermindEth/ere-guests/issues/58)) ([afc3f4e](https://github.com/NethermindEth/ere-guests/commit/afc3f4e0fdd8f23353469fdc088af51c3a765194))
+* update ere ([#59](https://github.com/NethermindEth/ere-guests/issues/59)) ([3a51da1](https://github.com/NethermindEth/ere-guests/commit/3a51da18930a21918d63c503880bdd9fa116289d))
+
+
+### Bug Fixes
+
+* re-export Platform ([#62](https://github.com/NethermindEth/ere-guests/issues/62)) ([70bd7a0](https://github.com/NethermindEth/ere-guests/commit/70bd7a0ef4ea585e5ab5d2766f510b987b68363f))
+
 ## [0.13.0](https://github.com/eth-act/ere-guests/compare/v0.12.1...v0.13.0) (2026-07-07)
 
 
