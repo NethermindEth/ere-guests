@@ -1,15 +1,9 @@
 [workspace]
 members = [
-    # Guest utils
-    "crates/guest",
-
-    # Guest libs
     "crates/stateless-validator-debug",
     "crates/stateless-validator-common",
     "crates/stateless-validator-ethrex",
     "crates/stateless-validator-reth",
-
-    # Test utils
     "crates/stateless-validator-test",
 
     # Utils
@@ -20,7 +14,7 @@ resolver = "2"
 [workspace.package]
 edition = "2024"
 license = "MIT OR Apache-2.0"
-rust-version = "1.88"
+rust-version = "1.93"
 version = "0.13.0"
 
 [workspace.lints.rust]
@@ -45,17 +39,18 @@ result_large_err = "allow"
 
 [workspace.dependencies]
 anyhow = { version = "1.0", default-features = false }
-bincode = { version = "2.0.1", default-features = false }
 clap = { version = "4.6.0", features = ["derive"] }
+const-hex = { version = "1.19", default-features = false }
+hex-literal = { version = "1.1.0", default-features = false }
 once_cell = { version = "1.21", default-features = false }
-rkyv = { version = "0.8.10", default-features = false }
 serde = { version = "1.0", default-features = false }
-serde_with = { version = "3", default-features = false }
 sha2 = { version = "0.10.9", default-features = false }
-bytes = { version = "1.6.0", default-features = false }
+thiserror = { version = "2.0", default-features = false }
 
 # test/util
+dashmap = "6.2"
 flate2 = "1.1.5"
+paste = "1.0"
 rayon = "1.11.0"
 reqwest = "0.12"
 serde_json = "1.0"
@@ -64,66 +59,62 @@ tempfile = "3.6.0"
 tokio = "1"
 tracing = "0.1.44"
 tracing-subscriber = "0.3.22"
+walkdir = "2.5.0"
+zstd = "0.13.3"
 
 # alloy
-alloy-consensus = { version = "2.0.0", default-features = false }
-alloy-eips = { version = "2.0.0", default-features = false }
-alloy-genesis = { version = "2.0.0", default-features = false, features = [
-    "serde-bincode-compat",
-] }
-alloy-rpc-types-engine = { version = "2.0.0", default-features = false }
-alloy-primitives = { version = "1.5.6", default-features = false, features = [
-    "map-foldhash",
-    "map-indexmap",
-] }
-alloy-rlp = { version = "0.3", default-features = false }
-alloy-trie = { version = "0.9", default-features = false }
+alloy-consensus = { version = "2.0.5", default-features = false }
+alloy-eips = { version = "2.0.5", default-features = false }
+alloy-genesis = { version = "2.0.5", default-features = false }
+alloy-primitives = { version = "1.6.0", default-features = false }
+alloy-rpc-types-engine = { version = "2.0.5", default-features = false }
 
 # revm
-revm = { version = "38.0.0", default-features = false }
+revm = { version = "40.0.3", default-features = false }
 
 # reth
-reth-chainspec = { git = "https://github.com/paradigmxyz/reth", tag = "v2.1.0", default-features = false }
-reth-ethereum-payload-builder = { git = "https://github.com/paradigmxyz/reth", tag = "v2.1.0", default-features = false }
-reth-ethereum-primitives = { git = "https://github.com/paradigmxyz/reth", tag = "v2.1.0", default-features = false }
-reth-evm-ethereum = { git = "https://github.com/paradigmxyz/reth", tag = "v2.1.0", default-features = false }
-reth-primitives-traits = { version = "0.3.0", default-features = false }
-reth-payload-validator = { git = "https://github.com/paradigmxyz/reth", tag = "v2.1.0", default-features = false }
-ef-tests = { git = "https://github.com/paradigmxyz/stateless", rev = "e5480e71a8031641ff471cad9dc482a7a14b32d5", default-features = false }
-stateless = { git = "https://github.com/paradigmxyz/stateless", rev = "e5480e71a8031641ff471cad9dc482a7a14b32d5", default-features = false }
-tries = { git = "https://github.com/paradigmxyz/stateless", rev = "e5480e71a8031641ff471cad9dc482a7a14b32d5", default-features = false }
+reth-chainspec = { git = "https://github.com/paradigmxyz/reth", tag = "v2.3.0", default-features = false }
+reth-ethereum-primitives = { git = "https://github.com/paradigmxyz/reth", tag = "v2.3.0", default-features = false }
+reth-evm-ethereum = { git = "https://github.com/paradigmxyz/reth", tag = "v2.3.0", default-features = false }
+reth-payload-validator = { git = "https://github.com/paradigmxyz/reth", tag = "v2.3.0", default-features = false }
+reth-primitives-traits = { version = "0.4.1", default-features = false }
+reth-stateless = { git = "https://github.com/paradigmxyz/stateless", rev = "2236845a84c3a7515312214e8a507e4731d73bb5", default-features = false, package = "stateless" }
+reth-tries = { git = "https://github.com/paradigmxyz/stateless", rev = "2236845a84c3a7515312214e8a507e4731d73bb5", default-features = false, package = "tries" }
 
 # ethrex
-ethrex-common = { git = "https://github.com/lambdaclass/ethrex.git", tag = "v15.0.0", default-features = false }
-ethrex-crypto = { git = "https://github.com/lambdaclass/ethrex.git", tag = "v15.0.0", default-features = false }
-ethrex-guest-program = { git = "https://github.com/lambdaclass/ethrex.git", tag = "v15.0.0", default-features = false }
-ethrex-rlp = { git = "https://github.com/lambdaclass/ethrex.git", tag = "v15.0.0", default-features = false }
-ethrex-rpc = { git = "https://github.com/lambdaclass/ethrex.git", tag = "v15.0.0", default-features = false }
-ethrex-vm = { git = "https://github.com/lambdaclass/ethrex.git", tag = "v15.0.0", default-features = false }
+ethrex-common = { git = "https://github.com/lambdaclass/ethrex.git", tag = "v19.0.0", default-features = false }
+ethrex-crypto = { git = "https://github.com/lambdaclass/ethrex.git", tag = "v19.0.0", default-features = false }
+ethrex-guest-program = { git = "https://github.com/lambdaclass/ethrex.git", tag = "v19.0.0", default-features = false }
 
 # ssz
 libssz = { version = "0.2.2", default-features = false, features = ["alloc"] }
-libssz_derive = { package = "libssz-derive", version = "0.2.2" }
-libssz_merkle = { package = "libssz-merkle", version = "0.2.2", default-features = false, features = [
-    "alloc",
-] }
-libssz_types = { package = "libssz-types", version = "0.2.2", default-features = false, features = [
-    "alloc",
-] }
+libssz-derive = { version = "0.2.2" }
+libssz-merkle = { version = "0.2.2", default-features = false, features = ["alloc"] }
+libssz-types = { version = "0.2.2", default-features = false, features = ["alloc"] }
+
+# openvm
+
+openvm-ecc-guest = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.0-rc.3" }
+openvm-sha2 = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.0-rc.3" }
+openvm-pairing = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.0-rc.3" }
+openvm-k256 = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.0-rc.3", package = "k256" }
+openvm-p256 = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.0-rc.3", package = "p256" }
+openvm-keccak256 = { git = "https://github.com/openvm-org/openvm.git", tag = "v2.0.0-rc.3" }
+openvm-curve-utils = { git = "https://github.com/axiom-crypto/openvm-eth", branch = "develop-v2.0.0-rc.3" }
+openvm-kzg = { git = "https://github.com/axiom-crypto/openvm-eth", branch = "develop-v2.0.0-rc.3" }
+bls12_381 = { git = "https://github.com/zkcrypto/bls12_381", rev = "6bb96951d5c2035caf4989b6e4a018435379590f", default-features = false }
 
 # zkvm-standard
-zkvm-interface = { git = "https://github.com/0xPolygonHermez/zisk.git", tag = "v0.18.0" }
+zkvm-interface = { git = "https://github.com/eth-act/zkvm-standards", rev = "282cd356c3a0498416bb0619f9c8a347ce9933fb" }
 
 # ere
-ere-codec = { git = "https://github.com/eth-act/ere", tag = "v0.12.1" }
-ere-platform-core = { git = "https://github.com/eth-act/ere", tag = "v0.12.1" }
-ere-prover-core = { git = "https://github.com/eth-act/ere", tag = "v0.12.1" }
-ere-dockerized = { git = "https://github.com/eth-act/ere", tag = "v0.12.1" }
-ere-util-build = { git = "https://github.com/eth-act/ere", tag = "v0.12.1" }
+ere-dockerized = { git = "https://github.com/eth-act/ere", tag = "v0.13.0" }
+ere-platform-core = { git = "https://github.com/eth-act/ere", tag = "v0.13.0" }
+ere-util-build = { git = "https://github.com/eth-act/ere", tag = "v0.13.0" }
 
 # local
-guest = { path = "crates/guest", default-features = false }
 stateless-validator-common = { path = "crates/stateless-validator-common", default-features = false }
+stateless-validator-debug = { path = "crates/stateless-validator-debug", default-features = false }
 stateless-validator-ethrex = { path = "crates/stateless-validator-ethrex", default-features = false }
 stateless-validator-reth = { path = "crates/stateless-validator-reth", default-features = false }
 stateless-validator-test = { path = "crates/stateless-validator-test", default-features = false }

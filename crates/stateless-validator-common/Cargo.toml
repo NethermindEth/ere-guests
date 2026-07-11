@@ -9,37 +9,21 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-anyhow.workspace = true
-rkyv = { workspace = true, optional = true }
-serde_with = { workspace = true, optional = true, features = ["macros"] }
-serde = { workspace = true, optional = true, features = [
-    "derive",
-    "alloc",
-], default-features = false }
+anyhow = { workspace = true, optional = true }
+const-hex = { workspace = true, features = ["alloc"] }
+sha2.workspace = true
+thiserror.workspace = true
 
 # ssz
 libssz.workspace = true
-libssz_derive.workspace = true
-libssz_merkle.workspace = true
-libssz_types.workspace = true
-
-#alloy
-alloy-primitives = { workspace = true, optional = true }
-alloy-eips = { workspace = true, optional = true }
-
-# crypto
-sha2.workspace = true
-
-# ere
-ere-platform-core.workspace = true
-ere-codec.workspace = true
+libssz-derive.workspace = true
+libssz-merkle = { workspace = true, features = ["sha2-backend"] }
+libssz-types.workspace = true
 
 [features]
 # guest
 default = ["std"]
-std = ["serde"]
-serde = ["dep:serde", "dep:serde_with"]
-rkyv = ["dep:rkyv"]
+std = []
 
 # host
-host = ["std", "dep:alloy-primitives", "dep:alloy-eips"]
+host = ["std"]

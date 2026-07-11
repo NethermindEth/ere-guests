@@ -3,8 +3,8 @@
 //! Nethermind's stateless-validator guest is a C#/.NET project — there is no
 //! Rust source to compile here. This `build.rs`:
 //!
-//! 1. Clones (or refreshes) `NethermindEth/nethermind` at branch `feature/stateless-input-gen-fixture`
-//!    (override via `NETHERMIND_REF`, `NETHERMIND_REPO_URL`, or `NETHERMIND_SRC`).
+//! 1. Clones (or refreshes) `NethermindEth/nethermind` at branch `master` (override via
+//!    `NETHERMIND_REF`, `NETHERMIND_REPO_URL`, or `NETHERMIND_SRC`).
 //! 2. Runs `make build` in `src/Nethermind/Nethermind.Stateless.ZiskGuest` (uses Docker + dotnet
 //!    AOT → ZisK ELF under the hood).
 //! 3. Optionally publishes `tools/StatelessInputGen` as a self-contained linux-x64 binary alongside
@@ -22,7 +22,7 @@ use std::{
 
 const ELF_NAME: &str = "stateless-validator-nethermind-zisk.elf";
 const DEFAULT_REPO_URL: &str = "https://github.com/NethermindEth/nethermind.git";
-const DEFAULT_REF: &str = "feature/stateless-input-gen-fixture";
+const DEFAULT_REF: &str = "master";
 const GUEST_SUBDIR: &str = "src/Nethermind/Nethermind.Stateless.ZiskGuest";
 const INPUT_GEN_SUBDIR: &str = "tools/StatelessInputGen";
 const INPUT_GEN_LAUNCHER: &str = "stateless-input-gen";
@@ -165,7 +165,6 @@ fn publish_input_gen(input_gen_dir: &Path, out_dir: &Path) {
             "linux-x64",
             "--self-contained",
             "true",
-            "-p:RunAnalyzers=false",
             "-o",
         ])
         .arg(&publish_target)

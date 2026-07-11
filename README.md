@@ -29,17 +29,17 @@ This repository contains guest programs and libraries designed to run on zkVM pl
 
 Located in `crates/`, these provide reusable functionality for guest programs and host:
 
-- [`guest`](crates/guest) - Core guest utilities and traits for building zkVM programs
+- [`stateless-validator-common`](crates/stateless-validator-common) - Canonical SSZ stateless input and output types shared by both validators
 - [`stateless-validator-ethrex`](crates/stateless-validator-ethrex) - Stateless validation using Ethrex
 - [`stateless-validator-reth`](crates/stateless-validator-reth) - Stateless validation using Reth
 - [`stateless-validator-debug`](crates/stateless-validator-debug) - CLI tool for running stateless validator guest fixtures natively
+- [`stateless-validator-test`](crates/stateless-validator-test) - Shared test harness that downloads EEST and RPC fixtures and runs guests on host and in dockerized zkVMs
 
 ### Guest Programs
 
 Located in `bin/`, these are executable guest programs for various zkVMs:
 
 - [`stateless-validator-ethrex`](bin/stateless-validator-ethrex) - Stateless validator using Ethrex
-- [`stateless-validator-nethermind`](bin/stateless-validator-nethermind) - Stateless validator using Nethermind (ZisK only — built from C#/.NET sources by [`bin/stateless-validator-nethermind/zisk/build.rs`](bin/stateless-validator-nethermind/zisk/build.rs))
 - [`stateless-validator-reth`](bin/stateless-validator-reth) - Stateless validator using Reth
 
 ## Development

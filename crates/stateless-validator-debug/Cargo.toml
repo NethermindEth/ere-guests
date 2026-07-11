@@ -14,20 +14,17 @@ clap.workspace = true
 serde = { workspace = true, features = ["derive"] }
 serde_json.workspace = true
 tracing.workspace = true
-tracing-subscriber.workspace = true
+tracing-subscriber = { workspace = true, features = ["env-filter"] }
 
 # alloy
 alloy-eips.workspace = true
-alloy-genesis.workspace = true
-alloy-primitives.workspace = true
+alloy-primitives = { workspace = true, features = ["serde"] }
 
-# reth
-reth-chainspec.workspace = true
-stateless.workspace = true
-ef-tests = { workspace = true, features = ["ef-tests"] }
+# ere
+ere-platform-core.workspace = true
 
 # local
-guest.workspace = true
+stateless-validator-common = { workspace = true, features = ["host"] }
 stateless-validator-ethrex = { workspace = true, default-features = true, features = [
     "host",
 ] }

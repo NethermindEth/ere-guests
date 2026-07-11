@@ -9,46 +9,38 @@ license.workspace = true
 workspace = true
 
 [dependencies]
-anyhow.workspace = true
-rkyv.workspace = true
-
-# alloy
-alloy-consensus = { workspace = true, optional = true }
-alloy-eips = { workspace = true, optional = true }
-alloy-genesis = { workspace = true, optional = true }
-alloy-rlp = { workspace = true, optional = true }
+thiserror.workspace = true
+hex-literal.workspace = true
 
 # ethrex
 ethrex-common.workspace = true
 ethrex-crypto.workspace = true
 ethrex-guest-program = { workspace = true, features = ["eip-8025"] }
-ethrex-rpc = { workspace = true, optional = true }
 
-# ssz
-libssz.workspace = true
-libssz_merkle.workspace = true
+# openvm
 
-# reth
-stateless = { workspace = true, optional = true }
+openvm-ecc-guest = { workspace = true, optional = true }
+openvm-sha2 = { workspace = true, optional = true }
+openvm-pairing = { workspace = true, features = ["bn254", "bls12_381"], optional = true }
+openvm-k256 = { workspace = true, optional = true }
+openvm-p256 = { workspace = true, optional = true }
+openvm-keccak256 = { workspace = true, optional = true }
+openvm-curve-utils = { workspace = true, optional = true }
+openvm-kzg = { workspace = true, optional = true }
+bls12_381 = { workspace = true, features = ["experimental"], optional = true }
 
 # zkvm-standard
 zkvm-interface = { workspace = true, optional = true }
 
+# ere
+ere-platform-core.workspace = true
+
 # local
-guest.workspace = true
 stateless-validator-common.workspace = true
-stateless-validator-reth = { workspace = true, default-features = true, optional = true, features = [
-    "host",
-] }
 
 [dev-dependencies]
+paste.workspace = true
 ere-dockerized.workspace = true
-stateless-validator-ethrex = { workspace = true, default-features = true, features = [
-    "host",
-] }
-stateless-validator-reth = { workspace = true, default-features = true, features = [
-    "host",
-] }
 stateless-validator-test.workspace = true
 
 [build-dependencies]
@@ -58,24 +50,21 @@ ere-util-build.workspace = true
 # guest
 default = ["std"]
 std = ["stateless-validator-common/std"]
-# NOTE: Need additional `ethrex-crypto/risc0` to make `KZG_PRECOMPUTE = 0`
-risc0 = ["ethrex-guest-program/risc0", "ethrex-guest-program/c-kzg", "ethrex-crypto/risc0"]
-sp1 = ["ethrex-guest-program/sp1", "ethrex-guest-program/secp256k1"]
+openvm = [
+    "dep:openvm-ecc-guest",
+    "dep:openvm-sha2",
+    "dep:openvm-pairing",
+    "dep:openvm-k256",
+    "dep:openvm-p256",
+    "dep:openvm-keccak256",
+    "dep:openvm-curve-utils",
+    "dep:openvm-kzg",
+    "dep:bls12_381",
+]
+sp1 = ["zkvm-interface"]
 zisk = ["zkvm-interface"]
 zkvm-interface = ["dep:zkvm-interface"]
 
 # host
-# NOTE: Need `ethrex-crypto/kzg-rs` to verify KZG proof on native host
-host = [
-    "std",
-    "ethrex-crypto/kzg-rs",
-    "ethrex-crypto/secp256k1",
-    "stateless-validator-common/host",
-    "dep:alloy-consensus",
-    "dep:alloy-eips",
-    "dep:alloy-rlp",
-    "dep:alloy-genesis",
-    "dep:ethrex-rpc",
-    "dep:stateless",
-    "dep:stateless-validator-reth",
-]
+# NOTE: Need `ethrex-crypto/blst` and `ethrex-crypto/kzg-rs` for execution on host.
+host = ["std", "ethrex-crypto/blst", "ethrex-crypto/kzg-rs", "ethrex-crypto/secp256k1", "stateless-validator-common/host"]
