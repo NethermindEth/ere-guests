@@ -3,8 +3,9 @@
 //! Nethermind's stateless-validator guest is a C#/.NET project — there is no
 //! Rust source to compile here. This `build.rs`:
 //!
-//! 1. Clones (or refreshes) `NethermindEth/nethermind` at branch `master` (override via
-//!    `NETHERMIND_REF`, `NETHERMIND_REPO_URL`, or `NETHERMIND_SRC`).
+//! 1. Clones (or refreshes) `NethermindEth/nethermind` and checks out the pinned commit
+//!    `d278822b4a` (override via `NETHERMIND_REF`, `NETHERMIND_REPO_URL`, or `NETHERMIND_SRC`).
+//!    `NETHERMIND_REF` may be a branch, tag, or full commit SHA.
 //! 2. Runs `make build` in `src/Nethermind/Nethermind.Stateless.ZiskGuest` (uses Docker + dotnet
 //!    AOT → ZisK ELF under the hood).
 //! 3. Optionally publishes `tools/StatelessInputGen` as a self-contained linux-x64 binary alongside
@@ -22,7 +23,8 @@ use std::{
 
 const ELF_NAME: &str = "stateless-validator-nethermind-zisk.elf";
 const DEFAULT_REPO_URL: &str = "https://github.com/NethermindEth/nethermind.git";
-const DEFAULT_REF: &str = "master";
+// Pinned to a specific commit for reproducible builds; bump deliberately.
+const DEFAULT_REF: &str = "d278822b4acdde12704f0e40eb4656c64c0677d1";
 const GUEST_SUBDIR: &str = "src/Nethermind/Nethermind.Stateless.ZiskGuest";
 const INPUT_GEN_SUBDIR: &str = "tools/StatelessInputGen";
 const INPUT_GEN_LAUNCHER: &str = "stateless-input-gen";
@@ -128,29 +130,28 @@ fn sync_checkout(src: &Path, repo_url: &str, git_ref: &str) {
         run(Command::new("git")
             .arg("-C")
             .arg(src)
-            .args(["fetch", "--tags", "--quiet"]));
-        run(Command::new("git")
-            .arg("-C")
-            .arg(src)
-            .args(["checkout", git_ref]));
+            .args(["fetch", "--tags", "--force", "--quiet", "origin"]));
     } else {
         if let Some(parent) = src.parent() {
             fs::create_dir_all(parent).expect("failed to create parent dir for NETHERMIND_SRC");
         }
-        log(&format!(
-            "cloning {repo_url} (branch {git_ref}) into {}",
-            src.display()
-        ));
-        run(Command::new("git")
-            .args([
-                "clone",
-                "--recurse-submodules",
-                "--branch",
-                git_ref,
-                repo_url,
-            ])
-            .arg(src));
+        log(&format!("cloning {repo_url} into {}", src.display()));
+        // No `--branch`: it only accepts branch/tag names, but git_ref may be a bare
+        // commit SHA. Clone the default branch (full history) and check the ref out below.
+        run(Command::new("git").args(["clone", repo_url]).arg(src));
     }
+
+    // Works for a branch, tag, or commit SHA (the target is reachable from a fetched ref).
+    run(Command::new("git")
+        .arg("-C")
+        .arg(src)
+        .args(["checkout", "--quiet", git_ref]));
+    run(Command::new("git").arg("-C").arg(src).args([
+        "submodule",
+        "update",
+        "--init",
+        "--recursive",
+    ]));
 }
 
 fn publish_input_gen(input_gen_dir: &Path, out_dir: &Path) {
