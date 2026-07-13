@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/NethermindEth/ere-guests/compare/v0.14.0...v0.14.1) (2026-07-13)
+
+
+### Miscellaneous Chores
+
+* release 0.14.1 ([3731bbe](https://github.com/NethermindEth/ere-guests/commit/3731bbe9668b684686c1ce6b3c854316c4a3887e))
+
 ## [0.14.0](https://github.com/NethermindEth/ere-guests/compare/v0.13.0...v0.14.0) (2026-07-11)
 
 
