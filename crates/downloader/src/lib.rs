@@ -11,7 +11,9 @@ use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use tempfile::tempdir;
 use tokio::{fs, process::Command};
 
-const REPO_API_URL: &str = "https://api.github.com/repos/eth-act/ere-guests";
+// This fork publishes the Nethermind guest alongside the upstream ones, so guests are resolved
+// from its releases rather than eth-act/ere-guests.
+const REPO_API_URL: &str = "https://api.github.com/repos/NethermindEth/ere-guests";
 const ACTION_NAME: &str = "Compile and Release Compiled Guests";
 
 /// Compiled guest ELF.
@@ -43,8 +45,12 @@ pub struct Downloader {
 
 impl Downloader {
     /// Creates a downloader from a GitHub release tag (e.g., `"v0.5.0"`).
+    ///
+    /// Authenticates with `GITHUB_TOKEN` when it is set: anonymous API calls share a low
+    /// per-IP rate limit and get 403s on busy CI runners.
     pub async fn from_tag(tag: &str) -> anyhow::Result<Self> {
-        let client = github_client(None)?;
+        let token = std::env::var("GITHUB_TOKEN").ok();
+        let client = github_client(token.as_deref())?;
         let assets = get_release_assets(&client, tag).await?;
         Ok(Self {
             client,
@@ -293,9 +299,9 @@ mod tests {
 
     #[tokio::test]
     async fn download_from_tag() -> anyhow::Result<()> {
-        let guest = Downloader::from_tag("v0.11.0")
+        let guest = Downloader::from_tag("v0.14.2")
             .await?
-            .download("empty-zisk")
+            .download("stateless-validator-reth-zisk")
             .await?;
         assert!(!guest.elf.is_empty());
         assert!(!guest.program_vk.is_empty());
@@ -309,9 +315,9 @@ mod tests {
             return Ok(());
         };
 
-        let guest = Downloader::from_commit("f245755", &github_token)
+        let guest = Downloader::from_commit("36c0385", &github_token)
             .await?
-            .download("empty-zisk")
+            .download("stateless-validator-reth-zisk")
             .await?;
         assert!(!guest.elf.is_empty());
         assert!(!guest.program_vk.is_empty());
